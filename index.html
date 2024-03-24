@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URI Encoder/Decoder Utility</title>
+    <style>
+        .clear {
+            clear: both;
+        }
+
+        .fifty {
+            float: left;
+            width: 49%;
+            margin: 5px 0;
+            padding: 5px 0;
+        }
+        .fifty:first-child {
+            margin-right: 1%;
+        }
+
+        .hundred {
+            float: left;
+            width: 99%;
+        }
+
+        body {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+<textarea id="url" class="hundred" ondblclick="urlToOthers()"></textarea>
+<div class="clear">
+    <textarea id="encoded" class="fifty" rows="40" ondblclick="decodeEncoded()"></textarea>
+    <textarea id="decoded" class="fifty" rows="40" ondblclick="reencode()"></textarea>
+</div>
+<div class="clear">
+    <input id="encodedPart" class="fifty" ondblclick="decodeEncodedPart()"></input>
+    <input id="decodedPart" class="fifty" ondblclick="encodeDecodedPart()"></input>
+</div>
+</body>
+<script>
+    const $url = document.getElementById('url');
+    const $encoded = document.getElementById('encoded');
+    const $decoded = document.getElementById('decoded');
+    const $encodedPart = document.getElementById('encodedPart');
+    const $decodedPart = document.getElementById('decodedPart');
+
+    function urlToOthers() {
+        const url = $url.value;
+        $encoded.value = url.split(/[?&]/).join('\n');
+        decodeEncoded();
+    }
+
+    function decodeEncoded() {
+        $decoded.value = $encoded.value.split('\n').map(splitParts(decodeURIComponent)).join('\n');
+    }
+
+    function reencode() {
+        const parts = $decoded.value.split('\n').map(splitParts(encodeURIComponent));
+        $encoded.value = parts.join('\n');
+        let url = parts[0];
+        if (parts.length > 1) {
+            url += '?' + parts.slice(1).join('&');
+        }
+        $url.value = url;
+    }
+
+    function splitParts(mapFn) {
+        return function(val, idx) {
+            if (idx === 0) {
+                return val;
+            }
+            const parts = val.split('=', 2);
+            return parts[0] + '=' + mapFn(parts[1]);
+        }
+    }
+
+    function decodeEncodedPart(){
+        $decodedPart.value = decodeURIComponent($encodedPart.value);
+    }
+
+    function encodeDecodedPart(){
+        $encodedPart.value = encodeURIComponent($decodedPart.value);
+    }
+
+</script>
+</html>
