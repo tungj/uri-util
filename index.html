@@ -20,23 +20,26 @@
 
         .hundred {
             float: left;
-            width: 99%;
+            width: 100%;
+            margin-top: 5px;
         }
 
         body {
             width: 100%;
+            margin: 0;
+            padding: 0;
         }
     </style>
 </head>
 <body>
-<textarea id="url" class="hundred" ondblclick="urlToOthers()"></textarea>
+<textarea id="url" class="hundred" ondblclick="urlToOthers()" placeholder="Paste a URL here and double-click this box to examine it"></textarea>
 <div class="clear">
-    <textarea id="encoded" class="fifty" rows="40" ondblclick="decodeEncoded()"></textarea>
-    <textarea id="decoded" class="fifty" rows="40" ondblclick="reencode()"></textarea>
+    <textarea id="encoded" class="fifty" rows="40" ondblclick="updateFromEncoded()" placeholder="The URI-encoded parameters will be listed here. You can change it and double-click it to update the top URL and decoded parameters."></textarea>
+    <textarea id="decoded" class="fifty" rows="40" ondblclick="reencode()" placeholder="The URI-decoded parameters will be listed here. You can change it and double-click it to encode them and update the top URL."></textarea>
 </div>
 <div class="clear">
-    <input id="encodedPart" class="fifty" ondblclick="decodeEncodedPart()">
-    <input id="decodedPart" class="fifty" ondblclick="encodeDecodedPart()">
+    <input id="encodedPart" class="fifty" ondblclick="decodeEncodedPart()" placeholder="Paste some URI-encoded value here, and double-click it to decode">
+    <input id="decodedPart" class="fifty" ondblclick="encodeDecodedPart()" placeholder="Paste some value you want to URI-encode here, and double-click it to encode">
 </div>
 </body>
 <script>
@@ -50,6 +53,16 @@
         const url = $url.value;
         $encoded.value = url.split(/[?&]/).join('\n');
         decodeEncoded();
+    }
+
+    function updateFromEncoded() {
+        decodeEncoded();
+        const parts = $encoded.value.split('\n');
+        let url = parts[0];
+        if (parts.length > 1) {
+            url += '?' + parts.slice(1).join('&');
+        }
+        $url.value = url;
     }
 
     function decodeEncoded() {
